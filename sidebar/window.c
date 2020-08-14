@@ -541,8 +541,11 @@ static bool prepare_sidebar(struct SidebarWindowData *wdata, int page_size)
   const struct SbEntry *hil_entry =
       (wdata->hil_index >= 0) ? *ARRAY_GET(&wdata->entries, wdata->hil_index) : NULL;
 
+  short c_sidebar_sort_method =
+      cs_subset_sort(wdata->sub, "sidebar_sort_method");
+
   update_entries_visibility(wdata);
-  sb_sort_entries(wdata, C_SidebarSortMethod);
+  sb_sort_entries(wdata, c_sidebar_sort_method);
 
   if (opn_entry || hil_entry)
   {
@@ -557,7 +560,7 @@ static bool prepare_sidebar(struct SidebarWindowData *wdata, int page_size)
   }
 
   if ((wdata->hil_index < 0) || hil_entry->is_hidden ||
-      (C_SidebarSortMethod != wdata->previous_sort))
+      (c_sidebar_sort_method != wdata->previous_sort))
   {
     if (wdata->opn_index >= 0)
       wdata->hil_index = wdata->opn_index;
@@ -602,7 +605,7 @@ static bool prepare_sidebar(struct SidebarWindowData *wdata, int page_size)
   if (wdata->bot_index > (ARRAY_SIZE(&wdata->entries) - 1))
     wdata->bot_index = ARRAY_SIZE(&wdata->entries) - 1;
 
-  wdata->previous_sort = C_SidebarSortMethod;
+  wdata->previous_sort = c_sidebar_sort_method;
 
   return (wdata->hil_index >= 0);
 }
@@ -736,7 +739,7 @@ static int draw_divider(struct SidebarWindowData *wdata, struct MuttWindow *win,
 
   mutt_curses_set_color(MT_COLOR_SIDEBAR_DIVIDER);
 
-  const int col = C_SidebarOnRight ? 0 : (num_cols - width);
+  const int col = cs_subset_bool(wdata->sub, "sidebar_on_right") ? 0 : (num_cols - width);
 
   for (int i = 0; i < num_rows; i++)
   {
@@ -745,7 +748,8 @@ static int draw_divider(struct SidebarWindowData *wdata, struct MuttWindow *win,
     switch (wdata->divider_type)
     {
       case SB_DIV_USER:
-        mutt_window_addstr(NONULL(C_SidebarDividerChar));
+        mutt_window_addstr(
+            NONULL(cs_subset_string(wdata->sub, "sidebar_divider_char")));
         break;
       case SB_DIV_ASCII:
         mutt_window_addch('|');
@@ -775,7 +779,9 @@ static void fill_empty_space(struct MuttWindow *win, int first_row,
   /* Fill the remaining rows with blank space */
   mutt_curses_set_color(MT_COLOR_NORMAL);
 
-  if (!C_SidebarOnRight)
+  struct SidebarWindowData *wdata = sb_wdata_get(win);
+
+  if (!cs_subset_bool(wdata->sub, "sidebar_on_right"))
     div_width = 0;
   for (int r = 0; r < num_rows; r++)
   {
@@ -804,7 +810,7 @@ int sb_repaint(struct MuttWindow *win)
   int num_cols = win->state.cols;
 
   int col = 0;
-  if (C_SidebarOnRight)
+  if (cs_subset_bool(wdata->sub, "sidebar_on_right"))
     col = wdata->divider_width;
 
   struct SbEntry **sbep = NULL;

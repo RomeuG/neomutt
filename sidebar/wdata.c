@@ -32,14 +32,18 @@
 #include "mutt/lib.h"
 #include "gui/lib.h"
 
+struct ConfigSubset;
+
 /**
  * sb_wdata_new - Create new Window data for the Sidebar
+ * @param sub Config subset
  * @retval ptr New Window data
  */
-struct SidebarWindowData *sb_wdata_new(void)
+struct SidebarWindowData *sb_wdata_new(struct ConfigSubset *sub)
 {
   struct SidebarWindowData *wdata = mutt_mem_calloc(1, sizeof(struct SidebarWindowData));
   ARRAY_INIT(&wdata->entries);
+  wdata->sub = sub;
   return wdata;
 }
 

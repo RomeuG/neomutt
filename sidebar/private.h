@@ -71,6 +71,8 @@ struct SidebarWindowData
   short previous_sort;       ///< Old `$sidebar_sort_method`
   enum DivType divider_type; ///< Type of divider to use, e.g. #SB_DIV_ASCII
   short divider_width;       ///< Width of the divider in screen columns
+
+  struct ConfigSubset *sub;  ///< Config scope
 };
 
 extern short C_SidebarComponentDepth;
@@ -102,7 +104,7 @@ void sb_sort_entries(struct SidebarWindowData *wdata, enum SortType sort);
 // wdata.c
 void                      sb_wdata_free(struct MuttWindow *win, void **ptr);
 struct SidebarWindowData *sb_wdata_get(struct MuttWindow *win);
-struct SidebarWindowData *sb_wdata_new(void);
+struct SidebarWindowData *sb_wdata_new(struct ConfigSubset *sub);
 
 // window.c
 int sb_recalc(struct MuttWindow *win);

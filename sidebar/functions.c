@@ -31,6 +31,7 @@
 #include <stdbool.h>
 #include "private.h"
 #include "mutt/lib.h"
+#include "config/lib.h"
 #include "core/lib.h"
 #include "gui/lib.h"
 #include "lib.h"
@@ -285,7 +286,8 @@ void sb_change_mailbox(struct MuttWindow *win, int op)
       changed = select_next(wdata);
       break;
     case OP_SIDEBAR_NEXT_NEW:
-      changed = select_next_new(wdata, C_SidebarNextNewWrap);
+      changed = select_next_new(
+          wdata, cs_subset_bool(wdata->sub, "sidebar_next_new_wrap"));
       break;
     case OP_SIDEBAR_PAGE_DOWN:
       changed = select_page_down(wdata);
@@ -297,7 +299,8 @@ void sb_change_mailbox(struct MuttWindow *win, int op)
       changed = select_prev(wdata);
       break;
     case OP_SIDEBAR_PREV_NEW:
-      changed = select_prev_new(wdata, C_SidebarNextNewWrap);
+      changed = select_prev_new(
+          wdata, cs_subset_bool(wdata->sub, "sidebar_next_new_wrap"));
       break;
     default:
       return;

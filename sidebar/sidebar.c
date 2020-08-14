@@ -48,7 +48,7 @@ struct ListHead SidebarWhitelist = STAILQ_HEAD_INITIALIZER(SidebarWhitelist); //
  */
 struct Mailbox *sb_get_highlight(struct MuttWindow *win)
 {
-  if (!C_SidebarVisible)
+  if (!mutt_window_is_visible(win))
     return NULL;
 
   struct SidebarWindowData *wdata = sb_wdata_get(win);
